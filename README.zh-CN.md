@@ -8,7 +8,7 @@
 
 ```bash
 # 安装到 Claude Code skills 目录
-git clone https://github.com/GeziP/deepwiki-skill.git ~/.claude/skills/deepwiki-skill
+git clone https://github.com/GeziP/deepwiki-module-skill.git ~/.claude/skills/deepwiki-module-skill
 ```
 
 就这么简单，无需其他配置。

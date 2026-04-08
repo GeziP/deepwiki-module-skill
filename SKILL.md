@@ -1,5 +1,5 @@
 ---
-name: deepwiki
+name: deepwiki-module
 description: 用于生成代码模块/类的技术设计文档。生成包含架构图、API 参考、使用示例和测试覆盖的完整文档，支持中英文。
 ---
 

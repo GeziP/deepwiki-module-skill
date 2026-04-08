@@ -8,7 +8,7 @@ A Claude Code skill for generating technical design documentation with ASCII dia
 
 ```bash
 # Install to Claude Code skills directory
-git clone https://github.com/GeziP/deepwiki-skill.git ~/.claude/skills/deepwiki-skill
+git clone https://github.com/GeziP/deepwiki-module-skill.git ~/.claude/skills/deepwiki-module-skill
 ```
 
 That's it. No additional setup required.
