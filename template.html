@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="generator" content="deepwiki-html">
   <title>{{MODULE_NAME}} 技术设计文档</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
   <style>
     /* ===== CSS Variables ===== */
     :root {
@@ -358,11 +360,22 @@
       line-height: 1.55;
       tab-size: 4;
     }
-    .code-block pre code {
+    .code-block pre code,
+    .code-block pre code.hljs {
       padding: 0;
       background: none;
       font-size: inherit;
     }
+    /* highlight.js theme override for dark mode toggle */
+    [data-theme="dark"] .hljs { color: #e6edf3; background: var(--code-bg); }
+    [data-theme="dark"] .hljs-keyword { color: #ff7b72; }
+    [data-theme="dark"] .hljs-string, [data-theme="dark"] .hljs-attr { color: #a5d6ff; }
+    [data-theme="dark"] .hljs-comment { color: #8b949e; }
+    [data-theme="dark"] .hljs-type, [data-theme="dark"] .hljs-built_in { color: #79c0ff; }
+    [data-theme="dark"] .hljs-number { color: #79c0ff; }
+    [data-theme="dark"] .hljs-function { color: #d2a8ff; }
+    [data-theme="dark"] .hljs-class .hljs-title { color: #ffa657; }
+    [data-theme="dark"] .hljs-meta { color: #79c0ff; }
     .code-block .lang-tag {
       position: absolute;
       top: 8px;
@@ -923,9 +936,20 @@ obj->doWork();</code></pre>
     </article>
   </div>
 
-  <!-- JS Enhancement Layer (~80 lines, progressive enhancement) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script>
   (function() {
+    // --- Syntax highlighting ---
+    if (typeof hljs !== 'undefined') {
+      document.querySelectorAll('.code-block pre code').forEach(function(block) {
+        var lang = block.closest('.code-block')?.getAttribute('data-lang');
+        if (lang && hljs.getLanguage(lang)) {
+          block.className = 'hljs language-' + lang;
+          hljs.highlightElement(block);
+        }
+      });
+    }
+
     // --- TOC auto-generation ---
     const toc = document.getElementById('toc');
     const headings = document.querySelectorAll('details > summary h2, .section-body h3');
