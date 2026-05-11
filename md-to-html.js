@@ -15,16 +15,16 @@
 const fs = require('fs');
 const path = require('path');
 
-const TECH_DOCS_DIR = path.resolve(__dirname, '..', 'tech-docs');
+const TECH_DOCS_DIR = path.resolve(__dirname, '..', '..', '..', 'doc', 'tech-docs');
 const TEMPLATE_PATH = path.resolve(__dirname, 'template.html');
 
 const args = process.argv.slice(2);
 const dryRun = args.includes('--dry-run');
 const convertAll = args.includes('--all');
-const generateIndex = args.includes('--index');
+const shouldGenerateIndex = args.includes('--index');
 const files = args.filter(a => !a.startsWith('--'));
 
-if (!convertAll && !generateIndex && files.length === 0) {
+if (!convertAll && !shouldGenerateIndex && files.length === 0) {
   console.log('Usage: node md-to-html.js [--all] [--index] [--dry-run] [file.md ...]');
   console.log('  --all      Convert all *_Design.md in tech-docs/');
   console.log('  --index    Generate index.html navigation page');
@@ -448,7 +448,7 @@ function generateIndex(projectName, projectDesc) {
 // --- Main ---
 const template = readTemplate();
 
-if (generateIndex) {
+if (shouldGenerateIndex) {
   const projectName = files[0] || 'HDSA-MACO';
   const projectDesc = files[1] || '硬件设备调度架构 — 模块设计文档集';
   generateIndex(projectName, projectDesc);
