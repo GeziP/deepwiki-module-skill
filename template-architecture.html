@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="deepwiki-html">
+  <title>{{SYSTEM_NAME}} 系统架构设计</title>
+  <style>
+    :root {
+      --font-sans: "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+      --font-mono: Consolas, "Courier New", "Fira Code", monospace;
+      --line-height: 1.65;
+      --max-width: 960px;
+      --toc-width: 240px;
+      --header-height: 48px;
+      --bg: #ffffff; --bg-secondary: #f7f9fb; --bg-tertiary: #edf2f3;
+      --text: #1f2a30; --text-muted: #66737c; --text-faint: #8a95a4;
+      --border: #dfe6e8; --border-light: #edf2f3;
+      --accent: #1c8790; --accent-hover: #15696f; --accent-soft: #e9fbfa;
+      --code-bg: #f5f7f9; --code-border: #e2e8ed;
+      --link: #1a6fa0; --link-hover: #14587e;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.06); --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+      --info: #3b82f6; --info-bg: #eff6ff; --info-border: #bfdbfe;
+      --success: #16a34a; --success-bg: #edf7f0; --success-border: #bbf0c9;
+      --warning: #ca8a04; --warning-bg: #fefce8; --warning-border: #fde68a;
+      --danger: #dc2626; --danger-bg: #fef2f2; --danger-border: #fecaca;
+      --note: #7c3aed; --note-bg: #f5f3ff; --note-border: #ddd6fe;
+      --card-green: #edf7f0; --card-amber: #fbf4e5; --card-red: #fbefee;
+      --card-violet: #f3f0fa; --card-cyan: #e9fbfa; --card-blue: #eef7fc;
+    }
+    [data-theme="dark"] {
+      --bg: #0d1117; --bg-secondary: #161b22; --bg-tertiary: #1c2128;
+      --text: #e6edf3; --text-muted: #8b949e; --text-faint: #6e7681;
+      --border: #30363d; --border-light: #21262d;
+      --accent: #58d5c9; --accent-hover: #79e0d7; --accent-soft: #122b2e;
+      --code-bg: #1c2128; --code-border: #30363d;
+      --link: #58a6ff; --link-hover: #79b8ff;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.3); --shadow-md: 0 4px 12px rgba(0,0,0,.4);
+      --info: #58a6ff; --info-bg: #0d1d31;
+      --success: #3fb950; --success-bg: #0d2818;
+      --warning: #d29922; --warning-bg: #2a1f05;
+      --danger: #f85149; --danger-bg: #2d0d0d;
+      --note: #a371f7; --note-bg: #1a0d2e;
+      --card-green: #0d2818; --card-amber: #2a1f05; --card-red: #2d0d0d;
+      --card-violet: #1a0d2e; --card-cyan: #0d2527; --card-blue: #0d1d31;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0d1117; --bg-secondary: #161b22; --bg-tertiary: #1c2128;
+        --text: #e6edf3; --text-muted: #8b949e; --text-faint: #6e7681;
+        --border: #30363d; --border-light: #21262d;
+        --accent: #58d5c9; --accent-hover: #79e0d7; --accent-soft: #122b2e;
+        --code-bg: #1c2128; --code-border: #30363d; --link: #58a6ff;
+        --card-green: #0d2818; --card-amber: #2a1f05; --card-red: #2d0d0d;
+        --card-violet: #1a0d2e; --card-cyan: #0d2527; --card-blue: #0d1d31;
+      }
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin:0; font-family:var(--font-sans); font-size:15px; line-height:var(--line-height); color:var(--text); background:var(--bg); }
+    .topbar { position:sticky; top:0; z-index:100; display:flex; align-items:center; gap:12px; height:var(--header-height); padding:0 24px; background:var(--bg); border-bottom:1px solid var(--border); font-size:13px; }
+    .topbar-brand { font-weight:800; color:var(--accent); }
+    .topbar-sep { color:var(--text-faint); }
+    .topbar-title { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text-muted); }
+    .topbar-actions { display:flex; gap:6px; }
+    .topbar-btn { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border:1px solid var(--border); border-radius:6px; background:var(--bg); color:var(--text-muted); cursor:pointer; font-size:16px; }
+    .topbar-btn:hover { border-color:var(--accent); color:var(--accent); }
+    .layout { display:grid; grid-template-columns:var(--toc-width) 1fr; min-height:calc(100vh - var(--header-height)); }
+    .sidebar { position:sticky; top:var(--header-height); height:calc(100vh - var(--header-height)); overflow-y:auto; padding:20px 0 20px 20px; border-right:1px solid var(--border); font-size:13px; scrollbar-width:thin; }
+    .toc-list { list-style:none; margin:0; padding:0; }
+    .toc-list a { display:block; padding:4px 12px 4px 10px; color:var(--text-muted); text-decoration:none; border-left:2px solid transparent; line-height:1.4; }
+    .toc-list a:hover { color:var(--text); background:var(--bg-secondary); }
+    .toc-list a.active { color:var(--accent); border-left-color:var(--accent); font-weight:600; }
+    .toc-list .toc-h3 { padding-left:24px; font-size:12px; }
+    .main { max-width:var(--max-width); margin:0 auto; padding:32px 40px 80px; }
+    .doc-meta { margin-bottom:36px; }
+    .doc-version { display:inline-block; padding:2px 10px; border-radius:4px; background:var(--accent-soft); color:var(--accent); font-size:12px; font-weight:700; }
+    .doc-meta h1 { margin:12px 0 16px; font-size:30px; line-height:1.2; }
+    .meta-grid { display:grid; grid-template-columns:auto 1fr; gap:4px 16px; padding:14px 18px; border:1px solid var(--border); border-radius:8px; background:var(--bg-secondary); font-size:14px; }
+    .meta-grid dt { color:var(--text-muted); font-weight:600; }
+    .meta-grid dd { margin:0; }
+    h2 { margin:40px 0 16px; padding-bottom:8px; font-size:22px; border-bottom:2px solid var(--border-light); }
+    h3 { margin:28px 0 10px; font-size:17px; }
+    h4 { margin:20px 0 8px; font-size:15px; font-weight:700; }
+    summary > h2 { display:inline; margin:0; border:0; padding:0; }
+    p { margin:0 0 12px; }
+    a { color:var(--link); text-decoration:none; }
+    a:hover { color:var(--link-hover); }
+    details { margin:24px 0; border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+    details > summary { padding:12px 18px; background:var(--bg-secondary); cursor:pointer; font-weight:700; font-size:18px; list-style:none; user-select:none; }
+    details > summary::-webkit-details-marker { display:none; }
+    details > summary::before { content:"▸"; display:inline-block; width:20px; color:var(--text-faint); transition:transform .15s; }
+    details[open] > summary::before { transform:rotate(90deg); }
+    details > .section-body { padding:18px 20px; }
+    .callout { margin:16px 0; padding:14px 18px; border-radius:8px; border-left:4px solid; font-size:14px; line-height:1.6; }
+    .callout.info { background:var(--info-bg); border-color:var(--info); }
+    .callout.warning { background:var(--warning-bg); border-color:var(--warning); }
+    .callout.success { background:var(--success-bg); border-color:var(--success); }
+    .callout.danger { background:var(--danger-bg); border-color:var(--danger); }
+    .callout.note { background:var(--note-bg); border-color:var(--note); }
+    .callout strong { display:block; margin-bottom:4px; font-size:13px; text-transform:uppercase; letter-spacing:.04em; }
+    .card-grid { display:grid; gap:16px; margin:16px 0; }
+    .card-grid.cols-2 { grid-template-columns:repeat(2,1fr); }
+    .card-grid.cols-3 { grid-template-columns:repeat(3,1fr); }
+    .card-grid.cols-4 { grid-template-columns:repeat(4,1fr); }
+    .card { padding:18px; border:1px solid var(--border); border-radius:8px; background:var(--bg); }
+    .card h3 { margin:0 0 10px; font-size:15px; }
+    .card ul { margin:0; padding-left:18px; font-size:14px; color:var(--text-muted); }
+    .card.accent-green { background:var(--card-green); }
+    .card.accent-amber { background:var(--card-amber); }
+    .card.accent-cyan { background:var(--card-cyan); }
+    .card.accent-blue { background:var(--card-blue); }
+    .card.accent-violet { background:var(--card-violet); }
+    code { padding:2px 6px; border-radius:4px; background:var(--code-bg); font-family:var(--font-mono); font-size:.9em; }
+    .code-block { position:relative; margin:16px 0; }
+    .code-block pre { margin:0; padding:16px 20px; border:1px solid var(--code-border); border-radius:8px; background:var(--code-bg); overflow-x:auto; font-family:var(--font-mono); font-size:13.5px; line-height:1.55; }
+    .code-block pre code { padding:0; background:none; font-size:inherit; }
+    .code-block .lang-tag { position:absolute; top:8px; right:48px; padding:1px 8px; border-radius:4px; background:var(--bg-tertiary); color:var(--text-faint); font-size:11px; font-family:var(--font-mono); }
+    .code-block .copy-btn { position:absolute; top:6px; right:8px; padding:4px 8px; border:1px solid var(--border); border-radius:4px; background:var(--bg); color:var(--text-muted); font-size:12px; cursor:pointer; opacity:0; transition:opacity .15s; }
+    .code-block:hover .copy-btn { opacity:1; }
+    .table-wrapper { margin:16px 0; overflow-x:auto; border:1px solid var(--border); border-radius:8px; }
+    table { width:100%; border-collapse:collapse; font-size:14px; }
+    th, td { padding:10px 14px; text-align:left; border-bottom:1px solid var(--border-light); }
+    th { background:var(--bg-secondary); font-weight:700; }
+    td { color:var(--text-muted); vertical-align:top; }
+    tr:last-child td { border-bottom:none; }
+    .diagram { margin:20px 0; text-align:center; }
+    .diagram svg { max-width:100%; height:auto; }
+    .diagram figcaption { margin-top:8px; font-size:13px; color:var(--text-faint); font-style:italic; }
+    .dep-tree { margin:12px 0; padding:14px 18px; border:1px solid var(--border); border-radius:8px; background:var(--code-bg); font-family:var(--font-mono); font-size:13px; line-height:1.6; white-space:pre; }
+    ul, ol { margin:0 0 12px; padding-left:22px; }
+    li + li { margin-top:3px; }
+
+    /* Architecture-specific: wider content area, bigger diagrams */
+    .main { --max-width: 960px; }
+    .diagram svg { min-height: 200px; }
+
+    /* Layer diagram */
+    .layer-stack { margin:16px 0; display:flex; flex-direction:column; gap:0; }
+    .layer {
+      padding: 14px 20px;
+      border: 1px solid var(--border);
+      text-align: center;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .layer:first-child { border-radius: 8px 8px 0 0; }
+    .layer:last-child { border-radius: 0 0 8px 8px; }
+    .layer.app { background: var(--card-blue); }
+    .layer.core { background: var(--card-green); }
+    .layer.infra { background: var(--card-amber); }
+    .layer.hw { background: var(--card-violet); }
+
+    @media (max-width:900px) {
+      .layout { grid-template-columns:1fr; }
+      .sidebar { display:none; }
+      .sidebar.open { display:block; position:fixed; top:var(--header-height); left:0; width:280px; height:calc(100vh - var(--header-height)); background:var(--bg); z-index:99; box-shadow:var(--shadow-md); }
+      .main { padding:24px 20px 60px; }
+      .card-grid.cols-3,.card-grid.cols-4 { grid-template-columns:1fr; }
+      .card-grid.cols-2 { grid-template-columns:1fr; }
+    }
+    @media print {
+      .topbar, .sidebar { display:none !important; }
+      .layout { display:block; }
+      .main { max-width:100%; padding:0; }
+      details { border:none; }
+      details > summary { display:none; }
+      details > .section-body { padding:0; display:block !important; }
+      .code-block .copy-btn { display:none; }
+    }
+    .menu-toggle { display:none; }
+    @media (max-width:900px) { .menu-toggle { display:inline-flex; } }
+  </style>
+</head>
+<body data-doctype="architecture">
+
+  <nav class="topbar">
+    <span class="topbar-brand">HDSA-MACO</span>
+    <span class="topbar-sep">/</span>
+    <span class="topbar-title">{{SYSTEM_NAME}} 系统架构设计</span>
+    <div class="topbar-actions">
+      <button class="topbar-btn menu-toggle" onclick="toggleSidebar()" title="目录">☰</button>
+      <button class="topbar-btn" onclick="toggleTheme()" title="切换主题">◐</button>
+      <button class="topbar-btn" onclick="window.print()" title="打印">⎙</button>
+    </div>
+  </nav>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <nav><ul class="toc-list" id="toc"></ul></nav>
+    </aside>
+
+    <article class="main" id="content">
+
+      <header class="doc-meta">
+        <span class="doc-version">{{VERSION}}</span>
+        <h1>{{SYSTEM_NAME}} 系统架构设计</h1>
+        <dl class="meta-grid">
+          <dt>项目</dt><dd>HDSA-MACO 调度器</dd>
+          <dt>更新日期</dt><dd>{{DATE}}</dd>
+          <dt>文档状态</dt><dd>{{STATUS}}</dd>
+        </dl>
+      </header>
+
+      <details open id="sec-overview">
+        <summary><h2>1. 系统概览</h2></summary>
+        <div class="section-body">
+          <p>[系统整体定位和职责描述]</p>
+          <figure class="diagram">
+            <svg viewBox="0 0 700 400" role="img" aria-label="系统架构总览">
+              <!-- 大尺寸系统架构 SVG -->
+            </svg>
+            <figcaption>图 1.1 — 系统架构总览</figcaption>
+          </figure>
+        </div>
+      </details>
+
+      <details open id="sec-layers">
+        <summary><h2>2. 分层架构</h2></summary>
+        <div class="section-body">
+          <div class="layer-stack">
+            <div class="layer app">应用层 — 配置解析、任务管理、周报导出</div>
+            <div class="layer core">核心层 — 调度引擎、模块管理、信号系统、故障处理</div>
+            <div class="layer infra">基础设施层 — 日志、错误码、取消令牌、参数容器</div>
+            <div class="layer hw">硬件抽象层 — IActionExecutor、HardwareBridge</div>
+          </div>
+
+          <h3>2.1 各层职责</h3>
+          <div class="card-grid cols-2">
+            <article class="card accent-blue">
+              <h3>应用层</h3>
+              <ul>
+                <li>[职责1]</li>
+              </ul>
+            </article>
+            <article class="card accent-green">
+              <h3>核心层</h3>
+              <ul>
+                <li>[职责1]</li>
+              </ul>
+            </article>
+            <article class="card accent-amber">
+              <h3>基础设施层</h3>
+              <ul>
+                <li>[职责1]</li>
+              </ul>
+            </article>
+            <article class="card accent-violet">
+              <h3>硬件抽象层</h3>
+              <ul>
+                <li>[职责1]</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </details>
+
+      <details open id="sec-components">
+        <summary><h2>3. 核心组件</h2></summary>
+        <div class="section-body">
+
+          <h3>3.1 组件清单</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>组件</th><th>文件</th><th>职责</th><th>文档</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><code>CycleScheduler</code></td>
+                  <td><code>CycleScheduler.h</code></td>
+                  <td>[核心调度]</td>
+                  <td><a href="tech-docs/CycleScheduler_Design.html">链接</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>3.2 组件关系图</h3>
+          <figure class="diagram">
+            <svg viewBox="0 0 700 500" role="img" aria-label="组件关系图">
+              <!-- 大尺寸组件依赖图 SVG -->
+            </svg>
+            <figcaption>图 3.1 — 组件依赖关系</figcaption>
+          </figure>
+
+        </div>
+      </details>
+
+      <details open id="sec-dataflow">
+        <summary><h2>4. 数据流</h2></summary>
+        <div class="section-body">
+          <h3>4.1 周期执行流程</h3>
+          <figure class="diagram">
+            <svg viewBox="0 0 700 300" role="img" aria-label="数据流">
+              <!-- 数据流 SVG -->
+            </svg>
+            <figcaption>图 4.1 — 一次周期执行的数据流</figcaption>
+          </figure>
+        </div>
+      </details>
+
+      <details id="sec-threads">
+        <summary><h2>5. 线程模型</h2></summary>
+        <div class="section-body">
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>线程</th><th>职责</th><th>创建/销毁</th></tr></thead>
+              <tbody>
+                <tr><td>主线程</td><td>[配置加载、启停]</td><td>[自动]</td></tr>
+                <tr><td>调度线程</td><td>[CycleScheduler 事件循环]</td><td>[startCycle()]</td></tr>
+                <tr><td>模块 Worker</td><td>[每个 Module 独立执行]</td><td>[Module::start()]</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+
+      <details id="sec-quality">
+        <summary><h2>6. 质量属性</h2></summary>
+        <div class="section-body">
+          <div class="card-grid cols-3">
+            <article class="card accent-green">
+              <h3>可测试性</h3>
+              <ul><li>[策略]</li></ul>
+            </article>
+            <article class="card accent-cyan">
+              <h3>可扩展性</h3>
+              <ul><li>[策略]</li></ul>
+            </article>
+            <article class="card accent-amber">
+              <h3>可靠性</h3>
+              <ul><li>[策略]</li></ul>
+            </article>
+          </div>
+        </div>
+      </details>
+
+      <details id="sec-appendix">
+        <summary><h2>附录</h2></summary>
+        <div class="section-body">
+          <h3>文件结构</h3>
+          <div class="dep-tree">src/scheduler/
+    ├── CycleScheduler.h/.cpp
+    ├── Module.h/.cpp
+    ├── Task.h/.cpp
+    ├── SignalManager.h/.cpp
+    ├── ActionExecutor.h/.cpp
+    ├── FaultBus.h/.cpp
+    ├── ErrorPolicyEngine.h/.cpp
+    ├── CycleGate.h/.cpp
+    └── ...</div>
+        </div>
+      </details>
+
+    </article>
+  </div>
+
+  <script>
+  (function() {
+    var toc = document.getElementById('toc');
+    document.querySelectorAll('details > summary h2, .section-body h3').forEach(function(h) {
+      var section = h.closest('details') || h.closest('.section-body');
+      var id = section && section.id ? section.id : '';
+      if (h.tagName === 'H3') {
+        id = h.textContent.trim().replace(/\s+/g, '-').replace(/[^\w\u4e00-\u9fff-]/g, '').toLowerCase();
+        h.id = id;
+      }
+      var li = document.createElement('li');
+      var a = document.createElement('a');
+      a.href = '#' + id;
+      a.textContent = h.textContent.trim();
+      if (h.tagName === 'H3') a.classList.add('toc-h3');
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        var t = document.getElementById(id);
+        if (t) { var d = t.closest('details'); if (d && !d.open) d.open = true; t.scrollIntoView({ behavior:'smooth', block:'start' }); }
+        if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
+      });
+      li.appendChild(a); toc.appendChild(li);
+    });
+    var tocLinks = toc.querySelectorAll('a');
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) { if (e.isIntersecting) { tocLinks.forEach(function(a){a.classList.remove('active')}); var l = toc.querySelector('a[href="#'+e.target.id+'"]'); if(l) l.classList.add('active'); }});
+    }, { rootMargin:'-80px 0px -70% 0px', threshold:0 });
+    document.querySelectorAll('details[id], h3[id]').forEach(function(el){ obs.observe(el); });
+    document.querySelectorAll('.code-block').forEach(function(b) {
+      var lang = b.getAttribute('data-lang');
+      if (lang) { var t = document.createElement('span'); t.className='lang-tag'; t.textContent=lang; b.appendChild(t); }
+      var btn = document.createElement('button'); btn.className='copy-btn'; btn.textContent='Copy';
+      btn.addEventListener('click', function() { var c = b.querySelector('code'); if(c&&navigator.clipboard) navigator.clipboard.writeText(c.textContent).then(function(){ btn.textContent='✓'; setTimeout(function(){ btn.textContent='Copy'; },1500); }); });
+      b.appendChild(btn);
+    });
+    var saved = localStorage.getItem('doc-theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+    window.toggleTheme = function() { var h=document.documentElement, c=h.getAttribute('data-theme'), n=c==='dark'?'light':'dark'; h.setAttribute('data-theme',n); localStorage.setItem('doc-theme',n); };
+    window.toggleSidebar = function() { document.getElementById('sidebar').classList.toggle('open'); };
+  })();
+  </script>
+</body>
+</html>
