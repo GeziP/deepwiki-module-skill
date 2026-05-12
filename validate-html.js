@@ -417,6 +417,7 @@ function checkTOC(html, report, fix) {
   if (tocContent.length === 0 || !/<li/.test(tocContent)) {
     if (fix) {
       const headings = [];
+      // Try <h2 id="xxx-h2"> (new format with details wrapper)
       const h2Re = /<h2[^>]*id="([^"]+)"[^>]*>([\s\S]*?)<\/h2>/g;
       let hm;
       while ((hm = h2Re.exec(html)) !== null) {
@@ -425,8 +426,9 @@ function checkTOC(html, report, fix) {
         headings.push({ id, text });
       }
 
+      // Also try <details id="xxx"><summary><h2>...</h2></summary>
       if (headings.length === 0) {
-        const detailsRe = /<details[^>]*id="([^"]+)"[^>]*>\s*<summary><h2>([\s\S]*?)<\/h2><\/summary>/g;
+        const detailsRe = /<details[^>]*id="([^"]+)"[^>]*>\s*<summary><h2[^>]*>([\s\S]*?)<\/h2><\/summary>/g;
         while ((hm = detailsRe.exec(html)) !== null) {
           headings.push({ id: hm[1], text: hm[2].replace(/<[^>]+>/g, '').trim() });
         }
