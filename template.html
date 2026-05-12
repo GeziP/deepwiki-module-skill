@@ -1006,14 +1006,9 @@ obj->doWork();</code></pre>
 
     // --- TOC auto-generation ---
     const toc = document.getElementById('toc');
-    const headings = document.querySelectorAll('details > summary h2, .section-body h3');
+    const headings = document.querySelectorAll('h2[id], h3[id]');
     headings.forEach(function(h) {
-      var section = h.closest('details') || h.closest('.section-body');
-      var id = section && section.id ? section.id : '';
-      if (h.tagName === 'H3') {
-        id = h.textContent.trim().replace(/\s+/g, '-').replace(/[^\w\u4e00-\u9fff-]/g, '').toLowerCase();
-        h.id = id;
-      }
+      var id = h.id;
       var li = document.createElement('li');
       var a = document.createElement('a');
       a.href = '#' + id;
