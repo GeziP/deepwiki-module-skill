@@ -1020,24 +1020,14 @@ obj->doWork();</code></pre>
       });
     }
 
-    // --- TOC auto-generation ---
-    const toc = document.getElementById('toc') || document.querySelector('.toc-list');
-    if (toc) {
-    const headings = document.querySelectorAll('details > summary h2, .section-body h3');
-    headings.forEach(function(h) {
-      var section = h.closest('details') || h.closest('.section-body');
-      var id = section && section.id ? section.id : '';
-      if (h.tagName === 'H3') {
-        id = h.textContent.trim().replace(/\s+/g, '-').replace(/[^\w\u4e00-\u9fff-]/g, '').toLowerCase();
-        h.id = id;
-      }
-      var li = document.createElement('li');
-      var a = document.createElement('a');
-      a.href = '#' + id;
-      a.textContent = h.textContent.trim();
-      if (h.tagName === 'H3') a.classList.add('toc-h3');
+    // --- TOC (static entries from converter) ---
+    const toc = document.getElementById('toc');
+
+    // Add click handlers to static TOC entries
+    toc.querySelectorAll('a').forEach(function(a) {
       a.addEventListener('click', function(e) {
         e.preventDefault();
+        var id = a.getAttribute('href').substring(1);
         var target = document.getElementById(id);
         if (target) {
           var details = target.closest('details');
@@ -1046,8 +1036,6 @@ obj->doWork();</code></pre>
         }
         closeSidebarOnMobile();
       });
-      li.appendChild(a);
-      toc.appendChild(li);
     });
 
     // --- ScrollSpy ---
@@ -1314,6 +1302,7 @@ obj->doWork();</code></pre>
     window.SkinSwitcher = { skins: SKINS, apply: applySkin, create: createSwitcher, init: init, current: function() { return document.documentElement.getAttribute('data-skin') || DEFAULT_SKIN; } };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else setTimeout(init, 10);
   })();
+
   </script>
 </body>
 </html>

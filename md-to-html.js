@@ -53,6 +53,17 @@ function escapeHtml(text) {
     .replace(/"/g, '&quot;');
 }
 
+function detectCodeLang(content) {
+  if (/[┌┐└┘│├┤┬┴─╔╗╚╝║═╠╣╦╩┼]/.test(content) || /───/.test(content)) return 'text';
+  if (/\b(void|int|bool|auto|class|struct|enum|template|namespace|const|static|virtual|override|noexcept)\b/.test(content)
+      || /#include/.test(content) || /std::/.test(content) || /nullptr/.test(content)
+      || /\bEXPECT_\w+|ASSERT_\w+/.test(content) || /TEST_F|TEST\(/.test(content)) return 'cpp';
+  if (/^\s*\{[\s\S]*\}\s*$/.test(content.trim()) && /"/.test(content) && /:/.test(content)) return 'json';
+  if (/^\$ /.test(content) || /^cmake /.test(content) || /^git /.test(content)) return 'bash';
+  if (/^flowchart|^graph |^sequenceDiagram|^classDiagram|^stateDiagram/.test(content.trim())) return 'mermaid';
+  return 'text';
+}
+
 function parseMdMeta(lines) {
   const meta = {};
   let i = 0;
@@ -134,7 +145,7 @@ function parseMarkdownSections(content) {
   return { title, meta, sections };
 }
 
-function mdBodyToHtml(body) {
+function mdBodyToHtml(body, parentSectionId) {
   const lines = body.split('\n');
   const out = [];
   let inCode = false;
@@ -193,13 +204,8 @@ function mdBodyToHtml(body) {
         codeLines = [];
       } else {
         const content = codeLines.join('\n');
-        const isAsciiArt = !codeLang || codeLang === '' || /[┌└├─│▼▶◀]/.test(content);
-        if (isAsciiArt && !codeLang) {
-          out.push(`<figure class="code-block"><pre><code>${escapeHtml(content)}</code></pre></figure>`);
-        } else {
-          const lang = codeLang || '';
-          out.push(`<figure class="code-block" data-lang="${lang}"><pre><code>${escapeHtml(content)}</code></pre></figure>`);
-        }
+        const lang = codeLang || detectCodeLang(content);
+        out.push(`<figure class="code-block" data-lang="${lang}"><pre><code>${escapeHtml(content)}</code></pre></figure>`);
         inCode = false;
         codeLang = '';
       }
@@ -239,14 +245,16 @@ function mdBodyToHtml(body) {
     if (/^### /.test(line)) {
       flushList(); flushOl(); flushTable();
       const heading = line.replace(/^### /, '').trim();
-      out.push(`<h3>${inlineMarkdown(heading)}</h3>`);
+      const h3Id = (parentSectionId || '') + '-' + headingToId(heading);
+      out.push(`<h3 id="${h3Id}">${inlineMarkdown(heading)}</h3>`);
       continue;
     }
 
     if (/^#### /.test(line)) {
       flushList(); flushOl(); flushTable();
       const heading = line.replace(/^#### /, '').trim();
-      out.push(`<h4>${inlineMarkdown(heading)}</h4>`);
+      const h4Id = (parentSectionId || '') + '-' + headingToId(heading);
+      out.push(`<h4 id="${h4Id}">${inlineMarkdown(heading)}</h4>`);
       continue;
     }
 
@@ -278,6 +286,10 @@ function inlineMarkdown(text) {
   return out;
 }
 
+function headingToId(text) {
+  return text.trim().replace(/\s+/g, '-').replace(/[^\w一-鿿-]/g, '').toLowerCase();
+}
+
 function sectionId(heading) {
   const num = heading.match(/^(\d+)/);
   if (num) {
@@ -289,8 +301,8 @@ function sectionId(heading) {
     };
     if (map[num[1]]) return map[num[1]];
   }
-  if (/附录|appendix/i.test(heading)) return 'sec-appendix';
-  return 'sec-' + heading.replace(/[^\w]/g, '').toLowerCase().slice(0, 20);
+  if (/附录|appendix/i.test(heading)) return 'sec-' + headingToId(heading);
+  return 'sec-' + headingToId(heading);
 }
 
 function shouldBeOpen(heading) {
@@ -313,15 +325,36 @@ function buildHtml(parsed, template) {
   const sectionsHtml = sections.map(s => {
     const id = sectionId(s.heading);
     const open = shouldBeOpen(s.heading) ? ' open' : '';
-    const bodyHtml = mdBodyToHtml(s.body);
+    const bodyHtml = mdBodyToHtml(s.body, id);
     return `
       <details${open} id="${id}">
-        <summary><h2>${s.heading}</h2></summary>
+        <summary><h2 id="${id}-h2">${s.heading}</h2></summary>
         <div class="section-body">
 ${bodyHtml}
         </div>
       </details>`;
   }).join('\n');
+
+  // Build static TOC from section headings + H3 sub-headings (skip code blocks)
+  const tocItems = [];
+  for (const s of sections) {
+    const id = sectionId(s.heading);
+    tocItems.push(`        <li><a href="#${id}-h2">${s.heading}</a></li>`);
+    // Extract H3 sub-headings from body, skipping code blocks
+    const bodyLines = s.body.split('\n');
+    let inCode = false;
+    for (const line of bodyLines) {
+      if (/^```/.test(line)) { inCode = !inCode; continue; }
+      if (inCode) continue;
+      const h3m = line.match(/^### (.+)$/);
+      if (h3m) {
+        const h3Text = h3m[1].trim();
+        const h3Id = id + '-' + headingToId(h3Text);
+        tocItems.push(`        <li><a href="#${h3Id}" class="toc-h3">${h3Text}</a></li>`);
+      }
+    }
+  }
+  const tocHtml = '\n' + tocItems.join('\n') + '\n      ';
 
   return `<!doctype html>
 <html lang="zh-CN">
@@ -349,7 +382,7 @@ ${bodyHtml}
 
   <div class="layout">
     <aside class="sidebar" id="sidebar">
-      <nav><ul class="toc-list" id="toc"></ul></nav>
+      <nav><ul class="toc-list" id="toc">${tocHtml}</ul></nav>
     </aside>
 
     <article class="main" id="content">
