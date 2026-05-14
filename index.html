@@ -1,0 +1,980 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Work+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;600&family=Noto+Serif+SC:wght@400;500;600&display=swap" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="deepwiki-module-skill">
+  <title>DeepWiki Module Documentation Generator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
+  <style>
+    /* ===== doc-shell.css (inlined) ===== */
+    :root {
+      --font-sans: "Work Sans", "Noto Sans SC", system-ui, sans-serif;
+      --font-mono: "IBM Plex Mono", Consolas, "Courier New", monospace;
+      --line-height: 1.65;
+      --max-width: 960px;
+      --toc-width: 240px;
+      --header-height: 48px;
+      --bg: #F2EEDF;
+      --bg-secondary: #ECE6D2;
+      --bg-tertiary: #E4DDD0;
+      --text: #2A241B;
+      --text-secondary: #5C5345;
+      --text-muted: #7A7060;
+      --text-faint: #9A9080;
+      --border: #D8D0C0;
+      --border-light: #E4DDD0;
+      --accent: #B07070;
+      --accent-hover: #9A5A5A;
+      --accent-soft: #F5EDED;
+      --accent-light: #F5EDED;
+      --accent-green: #16a34a;
+      --accent-green-light: #edf7f0;
+      --accent-orange: #ca8a04;
+      --accent-orange-light: #fefce8;
+      --accent-red: #dc2626;
+      --accent-red-light: #fef2f2;
+      --accent-purple: #7c3aed;
+      --accent-purple-light: #f5f3ff;
+      --code-bg: #ECE6D2;
+      --code-border: #D8D0C0;
+      --link: #8B5E5E;
+      --link-hover: #6B4040;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.06);
+      --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+      --radius: 8px;
+      --radius-lg: 8px;
+      --info: #7B8FA0;      --info-bg: #EDF0F2;     --info-border: #C8D0D8;
+      --success: #7B9A6B;   --success-bg: #EDF2EE;  --success-border: #C8D8CC;
+      --warning: #B08B40;   --warning-bg: #F5F0E0;  --warning-border: #D8CCA0;
+      --danger: #B05050;    --danger-bg: #F5EDED;   --danger-border: #D8B0B0;
+      --note: #8B7B9A;      --note-bg: #F0EDF5;     --note-border: #C8C0D8;
+      --card-green: #B7C7A8;
+      --card-amber: #D6DD63;
+      --card-red: #E1A4C2;
+      --card-violet: #C9BEDC;
+      --card-cyan: #A8C0B8;
+      --card-blue: #9AB0C8;
+    }
+    [data-theme="dark"] {
+      --bg: #1E1B16;
+      --bg-secondary: #282420;
+      --bg-tertiary: #302B25;
+      --text: #E8DDD0;
+      --text-secondary: #B0A595;
+      --text-muted: #8A7E70;
+      --text-faint: #6A6055;
+      --border: #4A4440;
+      --border-light: #352F2A;
+      --accent: #D4A0A0;
+      --accent-hover: #E0B5B5;
+      --accent-soft: #2A1E1E;
+      --accent-light: #2A1E1E;
+      --accent-green: #3fb950;
+      --accent-green-light: #0d2818;
+      --accent-orange: #d29922;
+      --accent-orange-light: #2a1f05;
+      --accent-red: #f85149;
+      --accent-red-light: #2d0d0d;
+      --accent-purple: #a371f7;
+      --accent-purple-light: #1a0d2e;
+      --code-bg: #282420;
+      --code-border: #4A4440;
+      --link: #D4A0A0;
+      --link-hover: #E0B5B5;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.3);
+      --shadow-md: 0 4px 12px rgba(0,0,0,.4);
+      --info: #58a6ff;      --info-bg: #0d1d31;     --info-border: #1f4170;
+      --success: #3fb950;   --success-bg: #0d2818;  --success-border: #1a4731;
+      --warning: #d29922;   --warning-bg: #2a1f05;  --warning-border: #4b3a12;
+      --danger: #f85149;    --danger-bg: #2d0d0d;   --danger-border: #5a1a1a;
+      --note: #a371f7;      --note-bg: #1a0d2e;     --note-border: #3b2066;
+      --card-green: #3fb950; --card-amber: #d29922; --card-red: #f85149;
+      --card-violet: #a371f7; --card-cyan: #39d2c0; --card-blue: #58a6ff;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #1E1B16; --bg-secondary: #282420; --bg-tertiary: #302B25;
+        --text: #E8DDD0; --text-secondary: #B0A595; --text-muted: #8A7E70; --text-faint: #6A6055;
+        --border: #4A4440; --border-light: #352F2A;
+        --accent: #D4A0A0; --accent-hover: #E0B5B5; --accent-soft: #2A1E1E; --accent-light: #2A1E1E;
+        --accent-green: #3fb950; --accent-green-light: #0d2818;
+        --accent-orange: #d29922; --accent-orange-light: #2a1f05;
+        --accent-red: #f85149; --accent-red-light: #2d0d0d;
+        --accent-purple: #a371f7; --accent-purple-light: #1a0d2e;
+        --code-bg: #282420; --code-border: #4A4440;
+        --link: #D4A0A0; --link-hover: #E0B5B5;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,.3); --shadow-md: 0 4px 12px rgba(0,0,0,.4);
+        --info: #58a6ff; --info-bg: #0d1d31; --info-border: #1f4170;
+        --success: #3fb950; --success-bg: #0d2818; --success-border: #1a4731;
+        --warning: #d29922; --warning-bg: #2a1f05; --warning-border: #4b3a12;
+        --danger: #f85149; --danger-bg: #2d0d0d; --danger-border: #5a1a1a;
+        --note: #a371f7; --note-bg: #1a0d2e; --note-border: #3b2066;
+        --card-green: #3fb950; --card-amber: #d29922; --card-red: #f85149;
+        --card-violet: #a371f7; --card-cyan: #39d2c0; --card-blue: #58a6ff;
+      }
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0; font-family: var(--font-sans); font-size: 15px;
+      line-height: var(--line-height); color: var(--text);
+      background: var(--bg); -webkit-font-smoothing: antialiased;
+    }
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; gap: 12px;
+      height: var(--header-height); padding: 0 24px;
+      background: var(--bg); border-bottom: 1px solid var(--border); font-size: 13px;
+    }
+    .topbar-brand { font-weight: 800; color: var(--accent); letter-spacing: .02em; white-space: nowrap; }
+    .topbar-sep { color: var(--text-faint); }
+    .topbar-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-muted); }
+    .topbar-actions { display: flex; gap: 6px; }
+    .topbar-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border: 1px solid var(--border); border-radius: 6px;
+      background: var(--bg); color: var(--text-muted); cursor: pointer; font-size: 16px;
+      transition: border-color .15s, color .15s;
+    }
+    .topbar-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .layout { display: grid; grid-template-columns: var(--toc-width) 1fr; min-height: calc(100vh - var(--header-height)); }
+    .sidebar {
+      position: sticky; top: var(--header-height);
+      height: calc(100vh - var(--header-height)); overflow-y: auto;
+      padding: 20px 0 20px 20px; border-right: 1px solid var(--border);
+      font-size: 13px; scrollbar-width: thin;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .toc-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); padding: 8px 20px 6px; }
+    .toc-list { list-style: none; margin: 0; padding: 0; }
+    .toc-list li { margin: 0; }
+    .toc-list a {
+      display: block; padding: 4px 12px 4px 10px;
+      color: var(--text-muted); text-decoration: none;
+      border-left: 2px solid transparent; border-radius: 0 4px 4px 0;
+      transition: color .15s, border-color .15s, background .15s; line-height: 1.4;
+    }
+    .toc-list a:hover { color: var(--text); background: var(--bg-secondary); }
+    .toc-list a.active { color: var(--accent); border-left-color: var(--accent); font-weight: 600; }
+    .toc-list .toc-h3 { padding-left: 24px; font-size: 12px; }
+    .main { max-width: var(--max-width); margin: 0 auto; padding: 32px 40px 80px; }
+    h1, h2, h3, h4 { margin: 0; color: var(--text); line-height: 1.3; }
+    h2 { margin: 40px 0 16px; padding-bottom: 8px; font-size: 22px; border-bottom: 2px solid var(--border-light); }
+    h3 { margin: 28px 0 10px; font-size: 17px; }
+    p { margin: 0 0 12px; }
+    ul, ol { margin: 6px 0 12px 20px; }
+    li { margin-bottom: 4px; font-size: 0.92rem; }
+    a { color: var(--link); text-decoration: none; }
+    a:hover { color: var(--link-hover); text-decoration: underline; }
+    .section { padding: 40px 0 20px; border-bottom: 1px solid var(--border-light); }
+    .section:last-child { border-bottom: none; }
+    .section-title {
+      font-size: 1.7rem; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.01em;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .section-title .icon {
+      width: 36px; height: 36px; border-radius: 10px; display: flex;
+      align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;
+    }
+    .section-desc { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 24px; max-width: 700px; }
+    .card-grid { display: grid; gap: 16px; margin: 16px 0; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .card-grid.cols-2 { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
+    .card-grid.cols-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .card {
+      background: var(--bg-secondary); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 20px; transition: all 0.2s;
+    }
+    .card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .card p, .card li { font-size: 0.88rem; color: var(--text-secondary); }
+    .card ul { margin: 6px 0 0 18px; }
+    .card.accent-green { border-left: 3px solid var(--card-green); }
+    .card.accent-amber { border-left: 3px solid var(--card-amber); }
+    .card.accent-red { border-left: 3px solid var(--card-red); }
+    .card.accent-violet { border-left: 3px solid var(--card-violet); }
+    .card.accent-cyan { border-left: 3px solid var(--card-cyan); }
+    .card.accent-blue { border-left: 3px solid var(--card-blue); }
+    .table-wrapper { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; margin: 12px 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th {
+      background: var(--bg-tertiary); padding: 12px 16px; text-align: left;
+      font-weight: 700; font-size: 0.82rem; text-transform: uppercase;
+      letter-spacing: 0.03em; color: var(--text-secondary);
+      border-bottom: 1px solid var(--border); position: sticky; top: 0;
+    }
+    td { padding: 12px 16px; border-bottom: 1px solid var(--border-light); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--bg-secondary); }
+    code {
+      font-family: var(--font-mono); background: var(--code-bg);
+      padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
+    }
+    .code-block {
+      position: relative; background: var(--code-bg); border: 1px solid var(--code-border);
+      border-radius: var(--radius); margin: 12px 0; overflow: hidden;
+    }
+    .code-block pre { padding: 16px 18px; overflow-x: auto; line-height: 1.6; margin: 0; }
+    .code-block code { background: none; padding: 0; font-size: 0.85rem; font-family: var(--font-mono); }
+    .code-block .copy-btn {
+      position: absolute; top: 6px; right: 8px; font-size: 0.72rem; color: var(--text-muted);
+      background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px;
+      padding: 2px 8px; cursor: pointer; opacity: 0; transition: opacity 0.15s;
+    }
+    .code-block:hover .copy-btn { opacity: 1; }
+    .code-block .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+    .code-block .copy-btn.copied { color: var(--accent-green); border-color: var(--accent-green); }
+    .code-block .cmt { color: var(--text-muted); }
+    .code-block .kw { color: var(--accent-purple); }
+    .code-block .fn { color: var(--accent); }
+    .code-block .str { color: var(--accent-green); }
+    .flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 16px 0; }
+    .flow-step {
+      background: var(--bg-secondary); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 10px 14px; text-align: center; flex: 1; min-width: 100px;
+      position: relative;
+    }
+    .flow-step b { display: block; font-size: 0.82rem; color: var(--accent); margin-bottom: 2px; }
+    .flow-step span { font-size: 0.78rem; color: var(--text-secondary); }
+    .flow-arrow { color: var(--text-muted); font-size: 1rem; flex-shrink: 0; }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 16px 0; }
+    .step {
+      background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 16px 16px 16px 52px; position: relative;
+    }
+    .step::before {
+      content: attr(data-step); position: absolute; left: 14px; top: 16px;
+      width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #fff;
+      font-size: 0.78rem; font-weight: 700; display: flex; align-items: center; justify-content: center;
+    }
+    .step h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
+    .step p { font-size: 0.82rem; color: var(--text-secondary); margin: 0; }
+    .callout {
+      margin: 16px 0; padding: 14px 18px; border-radius: 8px; border-left: 4px solid;
+      font-size: 14px; line-height: 1.6; display: flex; gap: 10px; align-items: flex-start;
+    }
+    .callout strong { display: block; margin-bottom: 4px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+    .callout.info { background: var(--info-bg); border-color: var(--info); color: var(--text); }
+    .callout.success { background: var(--success-bg); border-color: var(--success); color: var(--text); }
+    [id] { scroll-margin-top: calc(var(--header-height) + 16px); }
+    .sidebar-toggle { display: none; }
+
+    /* ===== Landing page specific ===== */
+    .hero {
+      text-align: center; padding: 60px 0 48px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .hero h1 {
+      font-size: 2.4rem; font-weight: 800; letter-spacing: -0.02em;
+      margin-bottom: 16px; line-height: 1.2;
+    }
+    .hero h1 .accent { color: var(--accent); }
+    .hero .subtitle {
+      font-size: 1.1rem; color: var(--text-secondary); max-width: 600px;
+      margin: 0 auto 32px; line-height: 1.6;
+    }
+    .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 24px; border-radius: 6px; font-size: 0.95rem;
+      font-weight: 600; text-decoration: none; transition: all 0.15s;
+      border: 1px solid transparent;
+    }
+    .btn-primary {
+      background: var(--accent); color: #fff;
+    }
+    .btn-primary:hover { background: var(--accent-hover); color: #fff; text-decoration: none; }
+    .btn-secondary {
+      background: var(--bg); color: var(--text); border-color: var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+    .feature-icon {
+      width: 40px; height: 40px; border-radius: 10px; display: flex;
+      align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;
+      background: var(--accent-soft); color: var(--accent);
+    }
+    .example-card {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .example-card .example-icon {
+      width: 44px; height: 44px; border-radius: 10px; display: flex;
+      align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;
+      background: var(--accent-soft); color: var(--accent);
+    }
+    .example-card .example-info { flex: 1; min-width: 0; }
+    .example-card .example-info h4 { margin-bottom: 4px; font-size: 0.95rem; }
+    .example-card .example-info p { margin: 0; font-size: 0.82rem; color: var(--text-muted); }
+    .example-card .example-link { color: var(--accent); font-size: 0.85rem; flex-shrink: 0; }
+    .badge-count {
+      display: inline-block; padding: 2px 10px; border-radius: 12px;
+      background: var(--accent-soft); color: var(--accent);
+      font-size: 0.75rem; font-weight: 700; margin-left: 8px;
+    }
+    .stat-row {
+      display: flex; gap: 32px; justify-content: center; flex-wrap: wrap;
+      margin: 32px 0 0; padding-top: 24px;
+      border-top: 1px solid var(--border-light);
+    }
+    .stat { text-align: center; }
+    .stat .stat-num { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
+    .stat .stat-label { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar {
+        position: fixed; top: var(--header-height); left: 0; width: 280px;
+        height: calc(100vh - var(--header-height)); z-index: 99;
+        transform: translateX(-100%); transition: transform 0.25s ease;
+        box-shadow: var(--shadow-md); background: var(--bg);
+      }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-toggle { display: flex; }
+      .main { padding: 24px 20px 40px; }
+      .card-grid, .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 1.8rem; }
+      .flow { flex-direction: column; }
+      .flow-arrow { transform: rotate(90deg); }
+      .steps { grid-template-columns: 1fr; }
+      .stat-row { gap: 20px; }
+    }
+    @media print {
+      .topbar, .sidebar, .copy-btn { display: none !important; }
+      .layout { grid-template-columns: 1fr; }
+      .main { max-width: 100%; padding: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== Top Bar ===== -->
+<div class="topbar">
+  <span class="topbar-brand">DeepWiki</span>
+  <span class="topbar-sep">/</span>
+  <span class="topbar-title">Module Documentation Generator</span>
+  <div class="topbar-actions">
+    <button class="topbar-btn sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">&#9776;</button>
+    <button class="topbar-btn" onclick="toggleTheme()" title="Toggle theme">&#9681;</button>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- ===== Sidebar ===== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="toc-title">Navigation</div>
+    <ul class="toc-list" id="toc">
+      <li><a href="#hero">Overview</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#examples">Example Docs</a></li>
+      <li><a href="#quickstart">Quick Start</a></li>
+      <li><a href="#specs">Technical Specs</a></li>
+    </ul>
+  </aside>
+
+  <!-- ===== Main Content ===== -->
+  <main class="main">
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+      <h1><span class="accent">DeepWiki</span> Module Documentation Generator</h1>
+      <p class="subtitle">
+        为 C++ 模块自动生成架构可视化、API 完整性、可运行代码示例的技术文档。
+        同时输出 Markdown 和 HTML 两种格式，单文件零依赖，离线可用。
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#examples">查看示例文档</a>
+        <a class="btn btn-secondary" href="https://github.com" target="_blank">查看源码</a>
+      </div>
+      <div class="stat-row">
+        <div class="stat">
+          <div class="stat-num">24</div>
+          <div class="stat-label">示例文档</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">12</div>
+          <div class="stat-label">文档章节</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">11</div>
+          <div class="stat-label">校验项</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">2</div>
+          <div class="stat-label">输出格式</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="section" id="features">
+      <div class="section-title">
+        <span class="icon" style="background:var(--accent-soft);color:var(--accent)">&#9881;</span>
+        Core Features
+      </div>
+      <p class="section-desc">六大核心特性，覆盖从生成到校验的完整工作流。</p>
+
+      <div class="card-grid cols-3">
+        <article class="card accent-cyan">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <div class="feature-icon">&#9638;</div>
+            <h4>架构可视化</h4>
+          </div>
+          <p>内联 SVG 图表（架构图、状态机、流程图），支持点击放大、滚轮缩放、拖拽平移。所有颜色使用 CSS 变量，暗色/浅色主题自动适配。</p>
+        </article>
+
+        <article class="card accent-blue">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <div class="feature-icon">&#9776;</div>
+            <h4>API 参考</h4>
+          </div>
+          <p>Tabs 组件展示多类 API，完整函数签名、参数说明、返回值。每个函数附带源码行号引用，可直接跳转到实现。</p>
+        </article>
+
+        <article class="card accent-green">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <div class="feature-icon">&#9852;</div>
+            <h4>双格式输出</h4>
+          </div>
+          <p>同时生成 <code>.md</code> 和 <code>.html</code> 两种格式。Markdown 用于 Git 版本控制和 Code Review，HTML 用于本地浏览和团队共享。</p>
+        </article>
+
+        <article class="card accent-violet">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <div class="feature-icon">&#9681;</div>
+            <h4>暗色/浅色主题</h4>
+          </div>
+          <p>自动跟随系统偏好（<code>prefers-color-scheme</code>），一键切换，<code>localStorage</code> 持久化。所有组件、图表、代码块均适配双主题。</p>
+        </article>
+
+        <article class="card accent-amber">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <div class="feature-icon">&#10003;</div>
+            <h4>代码高亮</h4>
+          </div>
+          <p>highlight.js 自动语法高亮 + 一键复制按钮。支持 C++、JSON、Bash 等语言。零依赖后备方案：手动 CSS 类着色。</p>
+        </article>
+
+        <article class="card accent-red">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <div class="feature-icon">&#9888;</div>
+            <h4>闭环校验</h4>
+          </div>
+          <p>11 类内容自动校验 + 修复：Mermaid 语法、章节 ID、代码块、表格、TOC 完整性、源码引用、术语表、Scope 声明等。校验-修复-复查闭环。</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Example Docs -->
+    <section class="section" id="examples">
+      <div class="section-title">
+        <span class="icon" style="background:var(--accent-green-light);color:var(--accent-green)">&#128196;</span>
+        Example Documents
+        <span class="badge-count">24</span>
+      </div>
+      <p class="section-desc">HDSA 项目已生成的模块技术文档，点击直接查看 HTML 版本。</p>
+
+      <div class="card-grid cols-2">
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/Task_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#9881;</div>
+            <div class="example-info">
+              <h4>Task</h4>
+              <p>任务抽象：优先级、周期 ID、取消令牌、策略、钩子</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/Module_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#9881;</div>
+            <div class="example-info">
+              <h4>Module</h4>
+              <p>任务分组与执行：固定工作线程、优先级队列、信号等待</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/CycleScheduler_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#128339;</div>
+            <div class="example-info">
+              <h4>CycleScheduler</h4>
+              <p>周期循环调度：startCycle &rarr; 检查 &rarr; 规划 &rarr; 入队 &rarr; finishCycle</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/SignalManager_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#9889;</div>
+            <div class="example-info">
+              <h4>SignalManager</h4>
+              <p>信号管理：统一 SignalRef、跨周期信号</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/ActionExecutor_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#9654;</div>
+            <div class="example-info">
+              <h4>ActionExecutor</h4>
+              <p>动作执行器接口（IActionExecutor）与注册表</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/TaskConfigLoader_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#128295;</div>
+            <div class="example-info">
+              <h4>TaskConfigLoader</h4>
+              <p>任务配置加载：JSON 解析、周期/全局配置合并</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/TaskConfig_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#128295;</div>
+            <div class="example-info">
+              <h4>TaskConfig</h4>
+              <p>任务配置数据结构与校验</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/TaskTypes_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#128196;</div>
+            <div class="example-info">
+              <h4>TaskTypes</h4>
+              <p>任务类型定义与策略绑定</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/TaskManagementSystem_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#9881;</div>
+            <div class="example-info">
+              <h4>TaskManagementSystem</h4>
+              <p>周期规划：加载任务、解析依赖、入队、启动</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/CycleGate_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#128682;</div>
+            <div class="example-info">
+              <h4>CycleGate</h4>
+              <p>周期门控：同步所有模块的周期开始</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/FaultBus_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#9888;</div>
+            <div class="example-info">
+              <h4>FaultBus</h4>
+              <p>故障总线：故障报告、级联、历史（cap=1024）</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/ErrorCode_System_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#10060;</div>
+            <div class="example-info">
+              <h4>ErrorCode System</h4>
+              <p>错误码系统：8 位字段编码（severity/module/device/code）</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/ErrorPolicyEngine_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#9888;</div>
+            <div class="example-info">
+              <h4>ErrorPolicyEngine</h4>
+              <p>错误策略引擎：CONTINUE / MODULE_STOP / GLOBAL_STOP</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/CancellationToken_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#10060;</div>
+            <div class="example-info">
+              <h4>CancellationToken</h4>
+              <p>取消令牌：任务/模块级取消机制</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/ConflictDetector_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#9888;</div>
+            <div class="example-info">
+              <h4>ConflictDetector</h4>
+              <p>冲突检测：资源冲突、ms 级重叠检测</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/ReactionExpander_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#9654;</div>
+            <div class="example-info">
+              <h4>ReactionExpander</h4>
+              <p>反应展开：相对周期展开、参数合并</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/SignalDependencyResolver_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#9889;</div>
+            <div class="example-info">
+              <h4>SignalDependencyResolver</h4>
+              <p>信号依赖解析器</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/ParamBag_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#128295;</div>
+            <div class="example-info">
+              <h4>ParamBag</h4>
+              <p>参数包：set / get / resolve 模板</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/TestManager_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#10003;</div>
+            <div class="example-info">
+              <h4>TestManager</h4>
+              <p>测试管理：资源感知调度、测试所有权解析</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/V9_ConfigSystem_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#128295;</div>
+            <div class="example-info">
+              <h4>V9 ConfigSystem</h4>
+              <p>V9 配置系统设计</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/EventLog_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#128196;</div>
+            <div class="example-info">
+              <h4>EventLog</h4>
+              <p>事件日志：spdlog 异步记录器、可配置行格式引擎</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/Logging_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#128196;</div>
+            <div class="example-info">
+              <h4>Logging</h4>
+              <p>日志模块设计</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/ReactionMdExporter_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#128230;</div>
+            <div class="example-info">
+              <h4>ReactionMdExporter</h4>
+              <p>Reaction 配置导出为 Markdown 表格</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+        <a class="card" href="../../../../E/hdsa/maco/hdsa-maco/doc/tech-docs/ExportUtils_Design.html" style="text-decoration:none;color:inherit">
+          <div class="example-card">
+            <div class="example-icon">&#128230;</div>
+            <div class="example-info">
+              <h4>ExportUtils</h4>
+              <p>导出工具模块（功能已迁移至 EventLog 和 ReactionMdExporter）</p>
+            </div>
+            <span class="example-link">HTML &rarr;</span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- Quick Start -->
+    <section class="section" id="quickstart">
+      <div class="section-title">
+        <span class="icon" style="background:var(--accent-orange-light);color:var(--accent-orange)">&#9654;</span>
+        Quick Start
+      </div>
+      <p class="section-desc">三步完成模块文档生成。</p>
+
+      <div class="steps">
+        <div class="step" data-step="1">
+          <h4>安装</h4>
+          <p>将 skill 文件放到 <code>~/.claude/skills/deepwiki-module-skill/</code> 目录</p>
+        </div>
+        <div class="step" data-step="2">
+          <h4>使用</h4>
+          <p>在 Claude Code 中说 <code>"给 XXX 生成 deepwiki 文档"</code></p>
+        </div>
+        <div class="step" data-step="3">
+          <h4>校验</h4>
+          <p>自动生成后运行 <code>validate-doc.js</code> 闭环校验</p>
+        </div>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-icon">&#9432;</div>
+        <div>
+          <strong>Tip</strong>
+          生成的文档同时输出 <code>.md</code> 和 <code>.html</code> 两种格式到 <code>doc/tech-docs/</code> 目录。Markdown 用于 Git 版本控制，HTML 用于本地浏览。
+        </div>
+      </div>
+
+      <div class="code-block" data-lang="bash">
+        <pre><code><span class="cmt"># 在 Claude Code 中触发文档生成</span>
+给 Task 生成 deepwiki 文档
+
+<span class="cmt"># 或使用英文</span>
+generate deepwiki doc for CycleScheduler
+
+<span class="cmt"># 校验生成的文档</span>
+node ~/.claude/skills/shared-docs/validate-doc.js --new-doc --fix --type module doc/tech-docs/Task_Design.html</code></pre>
+      </div>
+    </section>
+
+    <!-- Technical Specs -->
+    <section class="section" id="specs">
+      <div class="section-title">
+        <span class="icon" style="background:var(--accent-purple-light);color:var(--accent-purple)">&#9783;</span>
+        Technical Specs
+      </div>
+      <p class="section-desc">DeepWiki 的技术规格与能力矩阵。</p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Feature</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Output Format</strong></td>
+              <td><code>.md</code> + <code>.html</code>（单文件零依赖，可离线浏览）</td>
+            </tr>
+            <tr>
+              <td><strong>Diagrams</strong></td>
+              <td>内联 SVG（架构图、状态机、流程图），使用 CSS 变量适配主题</td>
+            </tr>
+            <tr>
+              <td><strong>Interaction</strong></td>
+              <td>点击放大（Fullscreen）、滚轮缩放、拖拽平移、Esc 关闭</td>
+            </tr>
+            <tr>
+              <td><strong>Theme</strong></td>
+              <td>暗色/浅色双主题，跟随系统偏好，<code>localStorage</code> 持久化</td>
+            </tr>
+            <tr>
+              <td><strong>Validation</strong></td>
+              <td>11 类闭环校验（Mermaid / ID / 代码块 / 表格 / TOC / 源码引用 / 术语表 / Scope 等）</td>
+            </tr>
+            <tr>
+              <td><strong>Language</strong></td>
+              <td>中文/英文模板（<code>template.md</code> / <code>template.en.md</code>）</td>
+            </tr>
+            <tr>
+              <td><strong>Chapter Structure</strong></td>
+              <td>12 章节（概述、设计目标、架构、核心概念、状态机、流程图、实现细节、API 参考、使用指南、FAQ、测试覆盖、附录）</td>
+            </tr>
+            <tr>
+              <td><strong>Code Highlight</strong></td>
+              <td>highlight.js + 手动 CSS 着色后备 + 一键复制按钮</td>
+            </tr>
+            <tr>
+              <td><strong>Collapsible Sections</strong></td>
+              <td><code>&lt;details&gt;</code> / <code>&lt;summary&gt;</code> 可折叠章节，重要章节默认展开</td>
+            </tr>
+            <tr>
+              <td><strong>Source References</strong></td>
+              <td>每个 API 附带 <code>file:line</code> 源码行号引用，可直接跳转</td>
+            </tr>
+            <tr>
+              <td><strong>TOC</strong></td>
+              <td>自动生成侧边栏目录，ScrollSpy 高亮当前章节</td>
+            </tr>
+            <tr>
+              <td><strong>Print</strong></td>
+              <td>打印优化，自动隐藏导航和交互元素</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout success">
+        <div class="callout-icon">&#10003;</div>
+        <div>
+          <strong>Zero Dependencies</strong>
+          生成的 HTML 是完全独立的单文件，所有 CSS 和 JavaScript 均内嵌。唯一的外部引用是 highlight.js CDN（可选，有 CSS 后备方案）。
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ===== doc-shell.js (inlined) ===== -->
+<script>
+(function() {
+  'use strict';
+
+  var root = document.documentElement;
+
+  // --- Theme: 3-layer (localStorage > OS preference > default light) ---
+  var savedTheme = localStorage.getItem('doc-theme');
+  if (savedTheme) {
+    root.setAttribute('data-theme', savedTheme);
+  } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    root.setAttribute('data-theme', 'dark');
+  }
+
+  window.toggleTheme = function() {
+    var current = root.getAttribute('data-theme');
+    var next = current === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem('doc-theme', next);
+  };
+
+  // --- Mobile sidebar toggle ---
+  window.toggleSidebar = function() {
+    document.getElementById('sidebar').classList.toggle('open');
+  };
+
+  function closeSidebarOnMobile() {
+    if (window.innerWidth <= 900) {
+      document.getElementById('sidebar').classList.remove('open');
+    }
+  }
+
+  // --- TOC auto-generation (manual for this page) ---
+  function buildTOC() {
+    var toc = document.getElementById('toc');
+    if (!toc) return;
+    toc.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        var id = link.getAttribute('href').slice(1);
+        var target = document.getElementById(id);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        closeSidebarOnMobile();
+      });
+    });
+  }
+
+  // --- ScrollSpy ---
+  function setupScrollSpy() {
+    var links = document.querySelectorAll('.toc-list a');
+    if (!links.length) return;
+
+    var targets = [];
+    links.forEach(function(link) {
+      var id = link.getAttribute('href');
+      if (!id) return;
+      id = id.slice(1);
+      var el = document.getElementById(id);
+      if (el) targets.push({ el: el, link: link });
+    });
+
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          links.forEach(function(l) { l.classList.remove('active'); });
+          var match = targets.find(function(t) { return t.el === entry.target; });
+          if (match) match.link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-80px 0px -70% 0px', threshold: 0 });
+
+    targets.forEach(function(t) { observer.observe(t.el); });
+  }
+
+  // --- Code copy buttons ---
+  function setupCodeBlocks() {
+    document.querySelectorAll('.code-block').forEach(function(block) {
+      if (block.querySelector('.copy-btn')) return;
+      var btn = document.createElement('button');
+      btn.className = 'copy-btn';
+      btn.textContent = 'Copy';
+      btn.addEventListener('click', function() {
+        var code = block.querySelector('code');
+        if (code && navigator.clipboard) {
+          navigator.clipboard.writeText(code.textContent).then(function() {
+            btn.textContent = '✓';
+            btn.classList.add('copied');
+            setTimeout(function() {
+              btn.textContent = 'Copy';
+              btn.classList.remove('copied');
+            }, 1500);
+          });
+        }
+      });
+      block.appendChild(btn);
+    });
+  }
+
+  // --- Init ---
+  buildTOC();
+  setupScrollSpy();
+  setupCodeBlocks();
+})();
+</script>
+
+</body>
+</html>
